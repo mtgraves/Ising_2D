@@ -17,7 +17,7 @@ def parseCMD():
     parser = argparse.ArgumentParser(description = 'simulate 2-D Ising model')
     parser.add_argument('--temp', '-T', type=float,
             help='enter temperature in kelvin')
-    parser.add_argument('--field', '-H', type=float,
+    parser.add_argument('--field', '-H', type=float, default=0.0,
             help='enter magnetic field strength')
     parser.add_argument('--length', '-L', type=float,
             help='enter the length of the 2-d lattice')
@@ -104,7 +104,7 @@ def energyChange(aa,L,J,w,h):
         spinSum += (aa[0,w] + aa[h-1,w] + aa[h,0] + aa[h,w-1])*aa[h,w]
     
     # simply flipping the sign of the energy gives energy change
-    delE =  J * spinSum     # divide by two because of double counting
+    delE =  2.0 * J * spinSum     # divide by two because of double counting
     return delE
 
 # =============================================================================
@@ -114,16 +114,15 @@ def main():
 
     # assign variables, define constants
     args = parseCMD()
-    T,H,L,J,s = args.temp, args.field, args.length, args.exchange, args.sweeps
+    T,H,L = float(args.temp), float(args.field), int(args.length)
+    J, s = float(args.exchange), int(args.sweeps)
     k_B = 1     # = 1.3806503 * pow(10,-23)
 
     # Create random numpy array of spins as either +/- 1
     latt = (2.0000*np.random.randint(2, size=pow(L,2))-1.0000).reshape(L,L)
-    print latt
 
     # calculate initial energy and macroscopic magnetism
     E, totalSpin = totalEnergy(latt, L, J)
-    print 'initial total spin: ',totalSpin
     M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
     
     # define arrays for mcSteps, Energies, Magnetism
@@ -136,20 +135,16 @@ def main():
     for step in mcSteps:
         # change the spin of one electron randomly
         over, down = random.randint(0,L-1), random.randint(0,L-1)
-        #print 'over:', over, 'down:', down
 
         # check change in energy
         delE = energyChange(latt, L, J, over, down)
-        #print 'delE: ',delE
 
         # calculate Boltzmann factor
         Boltz = np.exp(-1.0*delE/(k_B*T))
-        #print 'Boltz: ',Boltz
 
         if (delE <= 0):
             reject = False
             E += delE
-            #print 'accepted move unconditionally'
             if (latt[down,over]==1):
                 latt[down,over] = -1
                 totalSpin -= 2
@@ -158,9 +153,7 @@ def main():
                 totalSpin += 2
         else:
             n = random.random()
-            #print 'generated check num: ',n
             if (n <= Boltz):
-                #print 'accepted move stochastically'
                 E += delE
                 reject = False
                 if (latt[down,over]==1):
@@ -170,7 +163,6 @@ def main():
                     latt[down,over] = 1
                     totalSpin += 2
             else:
-                #print 'rejected move'
                 reject = True
 
         if reject==True:
@@ -178,23 +170,12 @@ def main():
         else:
             a += 1
 
-        #print 'new lattice:'
-        #print latt
-
         # calculate magnetism
         M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
         Es = np.append(Es, E)
         Ms = np.append(Ms, M)
-        #print ''
-        #print '==========================================='
     
     print 'acceptance ratio: ', 1.0*a/(r+a)
-
-    print 'final energy: ', Es[-1]
-    print 'final magnetism: ', Ms[-1]
-    print totalSpin
-    print 'final lattice: '
-    print latt
 
     if os.path.exists('./data/'):
         os.chdir('./data/')
@@ -204,17 +185,13 @@ def main():
 
     filename = 'ising2D_L%s_s%s_Temp%s.dat'%(int(L), s, T)
     fid = open(filename, 'w')
+    fid.write('# temp:  %s\n'%T)
     fid.write('# %15s\t%15s\t%15s\n'%('mcSteps','Energies','Magnetism'))
     zipped = zip(mcSteps, Es, Ms)
     np.savetxt(fid, zipped, fmt='%5.9f\t%5.9f\t%5.9f')
     fid.close()
-    print 'Yield data has been saved as ',filename
- 
-    #File = open(filename, "w")
-    #File.writelines(arr_a)
-    #File.close()
+    print 'Data has been saved to: ',filename
 
 # =============================================================================
 if __name__=="__main__":
     main()
-
