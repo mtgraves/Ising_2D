@@ -37,111 +37,58 @@ def calcEnergy(aa,L,J):
     """
     # vertical neighbors
     w, h, totalSpin, spinSum = 0, 0, 0.0, 0.0
-    print 'vert'
     while (h <= L-1):
         totalSpin += aa[h,w]
         if ((h == 0) and (w==0)):
             print 'left top row'
-            spinSum += (aa[1,0] + aa[-1,0])*aa[0,0]
+            spinSum += (aa[0,1] + aa[0,-1] + aa[1,0] + aa[-1,0])*aa[0,0]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w += 1
         elif ((h==0) and (w<L-1)):
             print 'middle top row'
-            spinSum += (aa[1,w] + aa[-1,w])*aa[0,w]
+            spinSum += (aa[1,w] + aa[-1,w] + aa[0,w-1] + aa[0,w+1])*aa[0,w]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w += 1
         elif ((h==0) and (w==L-1)):
             print 'right top row'
-            spinSum += (aa[1,w] + aa[-1,w])*aa[0,w]
+            spinSum += (aa[1,w] + aa[-1,w] + aa[0,0] + aa[0,w-1])*aa[0,w]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w = 0
             h += 1
         elif ((h<L-1) and (w==0)):
             print 'left middle'
-            spinSum += (aa[h+1,w] + aa[h-1,w])*aa[h,w]
+            spinSum += (aa[h+1,w] + aa[h-1,w] + aa[h,1] + aa[h,-1])*aa[h,0]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w += 1
         elif ((h<L-1) and (w<L-1)):
             print 'middle'
-            spinSum += (aa[h+1,w] + aa[h-1,w])*aa[h,w]
+            spinSum += (aa[h+1,w] + aa[h-1,w] + aa[h,w+1] + aa[h,w-1])*aa[h,w]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w += 1
         elif ((h<L-1) and (w==L-1)):
             print 'right middle'
-            spinSum += (aa[h+1,w] + aa[h-1,w])*aa[h,w]
+            spinSum += (aa[h+1,w] + aa[h-1,w] + aa[h,0] + aa[h,w-1])*aa[h,w]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w = 0
             h += 1
         elif ((h==L-1) and (w==0)):
             print 'left bottom'
-            spinSum += (aa[0,w] + aa[h-1,w])*aa[h,w]
+            spinSum += (aa[0,w] + aa[h-1,w] + aa[h,1] + aa[h,-1])*aa[h,w]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w += 1
         elif ((h==L-1) and (w<L-1)):
             print 'middle bottom row'
-            spinSum += (aa[0,w] + aa[h-1,w])*aa[h,w]
+            spinSum += (aa[0,w] + aa[h-1,w] + aa[h,w+1] + aa[h,w-1])*aa[h,w]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             w += 1
         elif ((h==L-1) and (w==L-1)):
             print 'right bottom'
-            spinSum += (aa[0,w] + aa[h-1,w])*aa[h,w]
+            spinSum += (aa[0,w] + aa[h-1,w] + aa[h,0] + aa[h,w-1])*aa[h,w]
             print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
             break
-    
-    # horizontal neighbors
-    w, h = 0, 0
-    print 'horiz'
-    while (h <= L-1):
-        if ((h == 0) and (w==0)):
-            print 'left top row'
-            spinSum += (aa[0,1] + aa[0,-1])*aa[0,0]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w += 1
-        elif ((h==0) and (w<L-1)):
-            print 'middle top row'
-            spinSum += (aa[0,w-1] + aa[0,w+1])*aa[0,w]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w += 1
-        elif ((h==0) and (w==L-1)):
-            print 'right top row'
-            spinSum += (aa[0,0] + aa[0,w-1])*aa[0,w]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w = 0
-            h += 1
-        elif ((h<L-1) and (w==0)):
-            print 'left middle'
-            spinSum += (aa[h,1] + aa[h,-1])*aa[h,0]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w += 1
-        elif ((h<L-1) and (w<L-1)):
-            print 'middle'
-            spinSum += (aa[h,w+1] + aa[h,w-1])*aa[h,w]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w += 1
-        elif ((h<L-1) and (w==L-1)):
-            print 'right middle'
-            spinSum += (aa[h,0] + aa[h,w-1])*aa[h,w]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w = 0
-            h += 1
-        elif ((h==L-1) and (w==0)):
-            print 'left bottom'
-            spinSum += (aa[h,1] + aa[h,-1])*aa[h,w]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w += 1
-        elif ((h==L-1) and (w<L-1)):
-            print 'middle bottom row'
-            spinSum += (aa[h,w+1] + aa[h,w-1])*aa[h,w]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            w += 1
-        elif ((h==L-1) and (w==L-1)):
-            print 'right bottom'
-            spinSum += (aa[h,0] + aa[h,w-1])*aa[h,w]
-            print 'w: ', w, 'h: ', h, 'spinSum: ', spinSum
-            break
-    
+     
     # calculate energy of the system
-    E = - J * spinSum
+    E = - 0.5 * J * spinSum     # divide by two because of double counting
     M =  math.fabs(totalSpin / pow(L,2))
     return E,M
 
