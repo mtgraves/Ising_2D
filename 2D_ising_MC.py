@@ -123,7 +123,8 @@ def main():
 
     # calculate initial energy and macroscopic magnetism
     E, totalSpin = totalEnergy(latt, L, J)
-    M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
+    #M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
+    M = 1.0*totalSpin/(1.0*pow(L,2))
     
     # define arrays for mcSteps, Energies, Magnetism
     mcSteps, Es, Ms = np.arange(s), np.array([E]), np.array([M])
@@ -170,8 +171,11 @@ def main():
         else:
             a += 1
 
-        # calculate magnetism
-        M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
+        # calculate magnetism (not absolute value)
+        #M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
+        M = 1.0*totalSpin/(1.0*pow(L,2))
+
+        # store magnetism, energy in array
         Es = np.append(Es, E)
         Ms = np.append(Ms, M)
     

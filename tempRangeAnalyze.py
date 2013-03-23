@@ -38,11 +38,14 @@ def main():
         tempT = estLines[0].split()[-1]
         print tempT
 
-        temps = pl.append(temps, tempT)
+        temps = pl.append(temps, float(tempT))
         mcSteps, En, Mag = pl.loadtxt(f, unpack=True)
 
-        Es = pl.append(Es, pl.average(En[-1000:]))
-        Ms = pl.append(Ms, pl.average(Mag[-1000:]))
+        # take last half of data, no matter size of array
+        binAfter = int(0.8*En.size)
+
+        Es = pl.append(Es, pl.average(En[-binAfter:]))
+        Ms = pl.append(Ms, pl.average(Mag[-binAfter:]))
 
     # plot energy vs. temp
     fig1 = pl.figure(1)
@@ -55,10 +58,10 @@ def main():
     # plot magnetization vs. temp
     fig2 = pl.figure(2)
     p2 = fig2.add_subplot(111)
-    pl.scatter(temps, Ms)
+    pl.scatter(temps, pl.absolute(Ms))
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)
-    pl.ylabel('Magnetization', size=20)
+    pl.ylabel('abs(Magnetization)', size=20)
     
     pl.show()
     
