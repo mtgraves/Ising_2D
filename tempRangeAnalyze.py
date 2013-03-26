@@ -47,6 +47,16 @@ def main():
         Es = pl.append(Es, pl.average(En[-binAfter:]))
         Ms = pl.append(Ms, pl.average(Mag[-binAfter:]))
 
+    # write temps, Es, Ms to file
+    filename = 'ising2D_reduced.txt'
+    fid = open(filename, 'w')
+    #fid.write('# temp:  %s\n'%T)
+    fid.write('# %15s\t%15s\t%15s\n'%('temps','Energies','Magnetism'))
+    zipped = zip(temps, Es, Ms)
+    pl.savetxt(fid, zipped, fmt='%5.9f\t%5.9f\t%5.9f')
+    fid.close()
+    print 'Data has been saved to: ',filename
+
     # plot energy vs. temp
     fig1 = pl.figure(1)
     p1 = fig1.add_subplot(111)
