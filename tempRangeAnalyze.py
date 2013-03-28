@@ -42,7 +42,7 @@ def main():
         mcSteps, En, Mag = pl.loadtxt(f, unpack=True)
 
         # take last half of data, no matter size of array
-        binAfter = int(0.8*En.size)
+        binAfter = int(0.95*En.size)
 
         Es = pl.append(Es, pl.average(En[-binAfter:]))
         Ms = pl.append(Ms, pl.average(Mag[-binAfter:]))
