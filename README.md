@@ -6,8 +6,3 @@ Ising-2D
 
 ![Magnetization vs. Temp](MvsT.png)
 
-<div style="float: right">
-<img src="MvsT.png" alt="M vs. T" height="15" width="15">
-</div>
-
- 
