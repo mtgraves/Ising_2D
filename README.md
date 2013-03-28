@@ -4,6 +4,6 @@ Ising-2D
 2D Ising Model using Metropolis Monte Carlo
 
 
-![Alt text](https://github.com/mtgraves/Ising_2D/blob/master/MvsT.png)
-
 ![Magnetization vs. Temp](MvsT.png)
+
+<img src="MvsT.png" alt="Smiley face" height="15" width="15"> 
