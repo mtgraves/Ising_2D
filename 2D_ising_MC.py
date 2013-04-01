@@ -7,6 +7,7 @@
 
 import random, math, os
 import numpy as np
+import pylab as pl
 import argparse
 
 #==============================================================================
@@ -15,6 +16,10 @@ def parseCMD():
     Parse the command line.
     """
     parser = argparse.ArgumentParser(description = 'simulate 2-D Ising model')
+    parser.add_argument("-S", "--showHist", action="store_true",
+            dest="showHist",
+            default=False,
+            help="show the simulation in histogram form (SLOW!)")
     parser.add_argument('--temp', '-T', type=float,
             help='enter temperature in kelvin')
     parser.add_argument('--field', '-H', type=float, default=0.0,
@@ -133,6 +138,14 @@ def main():
     # keep track of acceptance
     a = 0       # accepted moves
     r = 0       # rejected moves
+    
+    if args.showHist:
+        pl.ion()
+        pl.imshow(latt, cmap="BuPu",interpolation="nearest")
+        pl.title('Potential (SOR)')
+        pl.ylabel(r'$y/L$')
+        pl.xlabel(r'$x/L$')
+        pl.colorbar()
 
     for step in mcSteps:
         # change the spin of one electron randomly
@@ -179,7 +192,20 @@ def main():
         Es = np.append(Es, E)
         Ms = np.append(Ms, M)
         E2 = np.append(E2, E*E)
-    
+
+        if args.showHist:
+            pl.cla()
+            pl.imshow(latt,cmap='BuPu', interpolation="nearest")
+            pl.title('Potential (SOR)')
+            pl.ylabel(r'$y/L$')
+            pl.xlabel(r'$x/L$')
+            pl.draw()
+
+    if args.showHist:
+        #pl.savefig("SORhistogram.png")
+        pl.close()
+        pl.ioff()
+     
     print 'acceptance ratio: ', 1.0*a/(r+a)
 
     if os.path.exists('./data/'):
