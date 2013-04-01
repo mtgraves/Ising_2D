@@ -14,9 +14,12 @@ def parseCMD():
     desc= ('Ising 2D script for plotting phase transition.  Takes as its \
             argument the directory holding all of the data files that you ,\
             want to plot.')
-
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('direcN', help='name of data directory of interest')
+    parser.add_argument('--include', '-i', type=float,
+            default=0.95,
+            help='fraction of data to include [0.01-0.99]')
+
     return parser.parse_args()
 
 # =============================================================================
@@ -45,10 +48,9 @@ def main():
         mcSteps, En, Mag, E2 = pl.loadtxt(f, unpack=True)
 
         # take last half of data, no matter size of array
-        binAfter = int(0.95*En.size)
+        binAfter = int(args.include*En.size)
 
         Cv = (pl.average(E2)-(pl.average(En))**2)/(tempL**2*tempT**2)
-
         Es = pl.append(Es, pl.average(En[-binAfter:]))
         Ms = pl.append(Ms, pl.average(Mag[-binAfter:]))
         Cvs = pl.append(Cvs, Cv)
@@ -56,7 +58,6 @@ def main():
     # write temps, Es, Ms to file
     filename = 'ising2D_reduced.txt'
     fid = open(filename, 'w')
-    #fid.write('# temp:  %s\n'%T)
     fid.write('# size:  %s\n'%tempL)
     fid.write('# field:  %s\n'%tempH)
     fid.write('# %15s\t%15s\t%15s\t%15s\n'%('temps','Energies',

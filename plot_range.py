@@ -47,6 +47,8 @@ def numericalDer(x,y):
 
 # =============================================================================
 def main():
+
+    carolinaBlue = '#56A0D3'
    
     # load in reduced data from file
     args = parseCMD()
@@ -74,7 +76,8 @@ def main():
     # plot energy vs. temp
     fig1 = pl.figure(1)
     p1 = fig1.add_subplot(111)
-    pl.scatter(temps, Es)
+    pl.plot(temps,Es, marker='o', linewidth=0, ms=6,
+            markerfacecolor=carolinaBlue, markeredgecolor='Black')
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('Energy', size=20)
@@ -82,7 +85,8 @@ def main():
     # plot Cv vs. temp numerically
     fig2 = pl.figure(2)
     p2 = fig2.add_subplot(111)
-    pl.scatter(temps, Cv)
+    pl.plot(temps,Cv, marker='o', linewidth=0,
+            markerfacecolor='Lime', markeredgecolor='Black')
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('Specific Heat', size=20)
@@ -90,7 +94,8 @@ def main():
     # plot magnetization vs. temp
     fig3 = pl.figure(3)
     p3 = fig3.add_subplot(111)
-    pl.scatter(temps, pl.absolute(Ms))
+    pl.plot(temps,pl.absolute(Ms), marker='o', linewidth=0,
+            markerfacecolor='Cyan', markeredgecolor='Black')
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('abs(Magnetization)', size=20)
