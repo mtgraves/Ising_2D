@@ -40,10 +40,21 @@ def getD(f):
 # begin main
 # =============================================================================
 def main():
-    # read in the forest as peak yield
+    # read in the data
     args = parseCMD()
     fileName = args.fileN
-    mcSteps, Es, Ms = pl.loadtxt(fileName, unpack=True)
+    mcSteps, Es, Ms, E2 = pl.loadtxt(fileName, unpack=True)
+
+    # get parameters from header of data file
+    estFile = open(fileName,'r')
+    estLines = estFile.readlines();
+    T = float(estLines[0].split()[-1])
+    L = float(estLines[1].split()[-1])
+    H = float(estLines[2].split()[-1])
+
+    # Compute specific heat
+    Cv = (pl.average(E2) - (pl.average(Es))**2)/(L*L*T*T)
+    print 'C_v: ',Cv
 
     # plot energy
     fig1 = pl.figure(1)

@@ -30,22 +30,28 @@ def main():
 
     # arrays to hold data
     temps, Es, Ms = pl.array([]), pl.array([]), pl.array([])
+    Cvs = pl.array([])
 
     # fill arrays from data files
     for f in files:
         estFile = open(f,'r')
         estLines = estFile.readlines();
-        tempT = estLines[0].split()[-1]
-        print tempT
+        tempT = float(estLines[0].split()[-1])
+        tempL = float(estLines[1].split()[-1])
+        tempH = float(estLines[2].split()[-1])
+        print 'temp: ',tempT
 
         temps = pl.append(temps, float(tempT))
-        mcSteps, En, Mag = pl.loadtxt(f, unpack=True)
+        mcSteps, En, Mag, E2 = pl.loadtxt(f, unpack=True)
 
         # take last half of data, no matter size of array
         binAfter = int(0.95*En.size)
 
+        Cv = (pl.average(E2)-(pl.average(En))**2)/(tempL**2*tempT**2)
+
         Es = pl.append(Es, pl.average(En[-binAfter:]))
         Ms = pl.append(Ms, pl.average(Mag[-binAfter:]))
+        Cvs = pl.append(Cvs, Cv)
 
     # write temps, Es, Ms to file
     filename = 'ising2D_reduced.txt'
@@ -64,10 +70,18 @@ def main():
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('Energy', size=20)
-    
-    # plot magnetization vs. temp
+
+    # plot specific heat vs. temp
     fig2 = pl.figure(2)
     p2 = fig2.add_subplot(111)
+    pl.scatter(temps, Cvs)
+    pl.grid(True)
+    pl.xlabel('Temperature '+r'$[K]$', size=20)
+    pl.ylabel('Specific Heat', size=20)
+
+    # plot magnetization vs. temp
+    fig3 = pl.figure(3)
+    p3 = fig3.add_subplot(111)
     pl.scatter(temps, pl.absolute(Ms))
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)

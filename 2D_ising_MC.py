@@ -128,6 +128,7 @@ def main():
     
     # define arrays for mcSteps, Energies, Magnetism
     mcSteps, Es, Ms = np.arange(s), np.array([E]), np.array([M])
+    E2 = np.array([E*E])
 
     # keep track of acceptance
     a = 0       # accepted moves
@@ -172,12 +173,12 @@ def main():
             a += 1
 
         # calculate magnetism (not absolute value)
-        #M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
         M = 1.0*totalSpin/(1.0*pow(L,2))
 
         # store magnetism, energy in array
         Es = np.append(Es, E)
         Ms = np.append(Ms, M)
+        E2 = np.append(E2, E*E)
     
     print 'acceptance ratio: ', 1.0*a/(r+a)
 
@@ -190,9 +191,11 @@ def main():
     filename = 'ising2D_L%s_s%s_Temp%s.dat'%(int(L), s, T)
     fid = open(filename, 'w')
     fid.write('# temp:  %s\n'%T)
-    fid.write('# %15s\t%15s\t%15s\n'%('mcSteps','Energies','Magnetism'))
-    zipped = zip(mcSteps, Es, Ms)
-    np.savetxt(fid, zipped, fmt='%5.9f\t%5.9f\t%5.9f')
+    fid.write('# size:  %s\n'%L)
+    fid.write('# field:  %s\n'%H)
+    fid.write('# %15s\t%15s\t%15s\t%15s\n'%('mcSteps','Energies','Magnetism','Energy^2'))
+    zipped = zip(mcSteps, Es, Ms, E2)
+    np.savetxt(fid, zipped, fmt='%5.9f\t%5.9f\t%5.9f\t%5.9f')
     fid.close()
     print 'Data has been saved to: ',filename
 

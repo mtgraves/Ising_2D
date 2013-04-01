@@ -23,7 +23,8 @@ def parseCMD():
     parser.add_argument('direcN', help='name of reduced file of interest')
     return parser.parse_args()
 
-def derivatives(x,y):
+# =============================================================================
+def numericalDer(x,y):
     '''
     calculate dy by 4-point center differencing using array slices
 
@@ -43,30 +44,32 @@ def derivatives(x,y):
     dy[-1] = (y[-1] - y[-2])/(x[-1] - x[-2])
 
     return dy
+
 # =============================================================================
 def main():
    
     # load in reduced data from file
     args = parseCMD()
     fileName = args.direcN
-    temps, Es, Ms = pl.loadtxt(fileName, unpack=True)
+    temps, Es, Ms, Cv = pl.loadtxt(fileName, unpack=True)
 
-    combine = pl.sort(pl.column_stack((temps,Es)), axis=0)
+    ''' CURRENTLY BROKEN
+    # === take numerical/ analytical derivatives =====
+    combine = pl.vstack([temps,Es,Cv])
+    order = pl.lexsort(combine)
+    combine = combine.take(order, axis=-1)
 
-    EsSorted = pl.array([])
-    TsSorted = pl.array([])
-
-    for i in combine:
-        TsSorted = pl.append(TsSorted, i[0])
-        EsSorted = pl.append(EsSorted, i[1])
+    TsSorted = combine[0][::-1]
+    EsSorted = combine[1][::-1]
+    CvSorted = combine[2][::-1]
 
     tempsMore = pl.arange(TsSorted[0],TsSorted[-1], 0.01)
-
-    tck = interpolate.splrep(TsSorted, EsSorted, s=23)
-
+    tck = interpolate.splrep(TsSorted, EsSorted, s=2)
     Esmore = interpolate.splev(tempsMore,tck,der=0)
 
-    dy = derivatives(TsSorted,Esmore) 
+    dy = numericalDer(TsSorted,Esmore) 
+    # ================================================
+    '''
 
     # plot energy vs. temp
     fig1 = pl.figure(1)
@@ -76,10 +79,10 @@ def main():
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('Energy', size=20)
    
-    # plot Cv vs. temp
+    # plot Cv vs. temp numerically
     fig2 = pl.figure(2)
     p2 = fig2.add_subplot(111)
-    pl.scatter(tempsMore, dy)
+    pl.scatter(temps, Cv)
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('Specific Heat', size=20)
