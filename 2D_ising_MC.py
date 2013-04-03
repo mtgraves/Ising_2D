@@ -111,7 +111,7 @@ def energyChange(aa,L,J,w,h):
     # simply flipping the sign of the energy gives energy change
     delE =  2.0 * J * spinSum     # divide by two because of double counting
     return delE
-
+#def SwendsenWang(aa
 # =============================================================================
 # begin main function
 # =============================================================================
@@ -124,11 +124,10 @@ def main():
     k_B = 1     # = 1.3806503 * pow(10,-23)
 
     # Create random numpy array of spins as either +/- 1
-    latt = (2.0000*np.random.randint(2, size=pow(L,2))-1.0000).reshape(L,L)
+    latt = (2.0*np.random.randint(2, size=pow(L,2))-1.0).reshape(L,L)
 
     # calculate initial energy and macroscopic magnetism
     E, totalSpin = totalEnergy(latt, L, J)
-    #M = np.fabs(1.0*totalSpin/(1.0*pow(L,2)))
     M = 1.0*totalSpin/(1.0*pow(L,2))
     
     # define arrays for mcSteps, Energies, Magnetism
