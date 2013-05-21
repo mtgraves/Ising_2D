@@ -4,7 +4,7 @@
 # vs. temperature.
 #
 # Author:           Max Graves
-# Last Revision:    26-MAR-2013
+# Last Revision:    21-MAY-2013
 # =============================================================================
 
 import subprocess, os, sys, argparse, glob
@@ -34,8 +34,8 @@ def numericalDer(x,y):
     and y[-1] and y[-2] must be defined by lower order methods
     '''
 
-    dy = np.zeros(y.shape,np.float) #we know it will be this size
-    h = x[1]-x[0] #this assumes the points are evenely spaced!
+    dy = np.zeros(y.shape,np.float) # we know it will be this size
+    h = x[1]-x[0] # assumes the points are evenly spaced
     dy[2:-2] = (y[0:-4] - 8*y[1:-3] + 8*y[3:-1] - y[4:])/(12.*h)
 
     dy[0] = (y[1]-y[0])/(x[1]-x[0])
@@ -55,24 +55,22 @@ def main():
     fileName = args.direcN
     temps, Es, Ms, Cv = pl.loadtxt(fileName, unpack=True)
 
-    ''' CURRENTLY BROKEN
     # === take numerical/ analytical derivatives =====
-    combine = pl.vstack([temps,Es,Cv])
-    order = pl.lexsort(combine)
-    combine = combine.take(order, axis=-1)
+    k = [(temps[i],Es[i],Cv[i]) for i in np.argsort(temps)]
 
-    TsSorted = combine[0][::-1]
-    EsSorted = combine[1][::-1]
-    CvSorted = combine[2][::-1]
+    TsSorted, EsSorted, CvSorted = pl.array([]), pl.array([]), pl.array([])
+    for tup in k:
+        TsSorted = pl.append(TsSorted, tup[0])
+        EsSorted = pl.append(EsSorted, tup[1])
+        CvSorted = pl.append(CvSorted, tup[2])
 
     tempsMore = pl.arange(TsSorted[0],TsSorted[-1], 0.01)
-    tck = interpolate.splrep(TsSorted, EsSorted, s=2)
+    tck = interpolate.splrep(TsSorted, EsSorted, s=30)
     Esmore = interpolate.splev(tempsMore,tck,der=0)
 
     dy = numericalDer(TsSorted,Esmore) 
     # ================================================
-    '''
-
+    
     # plot energy vs. temp
     fig1 = pl.figure(1)
     p1 = fig1.add_subplot(111)
@@ -82,14 +80,14 @@ def main():
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('Energy', size=20)
    
-    # plot Cv vs. temp numerically
+    # plot Cv vs. temp using fluctuations
     fig2 = pl.figure(2)
     p2 = fig2.add_subplot(111)
     pl.plot(temps,Cv, marker='o', linewidth=0,
             markerfacecolor='Lime', markeredgecolor='Black')
     pl.grid(True)
     pl.xlabel('Temperature '+r'$[K]$', size=20)
-    pl.ylabel('Specific Heat', size=20)
+    pl.ylabel('Specific Heat (using fluctuations)', size=20)
     
     # plot magnetization vs. temp
     fig3 = pl.figure(3)
@@ -100,7 +98,16 @@ def main():
     pl.xlabel('Temperature '+r'$[K]$', size=20)
     pl.ylabel('abs(Magnetization)', size=20)
     
+    # plot Cv vs. temp using fluctuations
+    fig4 = pl.figure(4)
+    p4 = fig4.add_subplot(111)
+    pl.plot(tempsMore,dy)
+    pl.grid(True)
+    pl.xlabel('Temperature '+r'$[K]$', size=20)
+    pl.ylabel('Specific Heat (spline fitting)', size=20)
+    
     pl.show()
+
 # =============================================================================
 if __name__=='__main__':
     main()
